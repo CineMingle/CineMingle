@@ -2,8 +2,8 @@
 
 欢迎使用 CineMingle，一款专为本地影片管理软件（如Emby、Jellyfin、Kodi等）设计的元数据抓取工具。CineMingle 的主要功能是通过抓取元数据信息来优化本地影片的管理与分类，为您的影片库提供更完善的信息整理服务。
 
-## 本项目基于停止维护的开源项目[Movie_Data_Capture](https://github.com/yoshiko2/Movie_Data_Capture/tree/master)进行开发：
-CineMingle 是在停止维护的开源项目[Movie_Data_Capture](https://github.com/yoshiko2/Movie_Data_Capture/tree/master)基础上进行开发的，为了继承并加强其功能，我们成立了这个项目。我们感谢开源社区的贡献，并将努力将这个工具推向新的高度。
+## 本项目基于停止维护的开源项目 [Movie_Data_Capture](https://github.com/yoshiko2/Movie_Data_Capture/tree/master) 进行开发：
+CineMingle 是在停止维护的开源项目 [Movie_Data_Capture](https://github.com/yoshiko2/Movie_Data_Capture/tree/master) 基础上进行开发的，为了继承并加强其功能，我们成立了这个项目。我们感谢开源社区的贡献，并将努力将这个工具推向新的高度。
 
 ## 主要特性：
 🎬 元数据抓取： 通过 CineMingle，您可以轻松抓取影片的详细元数据，包括电影海报、演员阵容、导演信息等。让您的本地影片库更加丰富有趣。
