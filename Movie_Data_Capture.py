@@ -39,7 +39,7 @@ def argparse_function(ver: str) -> typing.Tuple[str, str, str, str, bool, bool, 
     conf = config.getInstance()
     parser = argparse.ArgumentParser(epilog=f"Load Config file '{conf.ini_path}'.")
     parser.add_argument("file", default='', nargs='?', help="Single Movie file path.")
-    parser.add_argument("-p", "--path", default='', nargs='?', help="Analysis folder path.")
+    parser.add_argument("-p", "--path", default='movies', nargs='?', help="Analysis folder path.")
     parser.add_argument("-m", "--main-mode", default='', nargs='?',
                         help="Main mode. 1:Scraping 2:Organizing 3:Scraping in analysis folder")
     parser.add_argument("-n", "--number", default='', nargs='?', help="Custom file number of single movie file.")

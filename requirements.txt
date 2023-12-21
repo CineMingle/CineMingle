@@ -1,11 +1,10 @@
 requests
-dlib-bin
+Pillow 
 Click
 numpy
 face-recognition-models
 lxml
 beautifulsoup4
-pillow
 cloudscraper
 pysocks==1.7.1
 urllib3==1.25.11
