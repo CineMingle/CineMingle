@@ -7,6 +7,9 @@ import config
 import importlib
 from pathlib import Path
 from PIL import Image
+# 感谢 聪明绝顶二狗子 提供解决方案
+if not hasattr(Image, 'ANTIALIAS'):
+    setattr(Image, 'ANTIALIAS', Image.LANCZOS)
 import shutil
 from ADC_function import file_not_exist_or_empty
 

@@ -4,6 +4,9 @@ import shutil
 import sys
 
 from PIL import Image
+# 感谢 聪明绝顶二狗子 提供解决方案
+if not hasattr(Image, 'ANTIALIAS'):
+    setattr(Image, 'ANTIALIAS', Image.LANCZOS)
 from io import BytesIO
 from datetime import datetime
 # from videoprops import get_video_properties

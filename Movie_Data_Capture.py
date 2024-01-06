@@ -24,14 +24,14 @@ from core import core_main, core_main_no_net_op, moveFailedFolder, debug_print
 
 
 def check_update(local_version):
-    htmlcode = get_html("https://api.github.com/repos/yoshiko2/Movie_Data_Capture/releases/latest")
+    htmlcode = get_html("https://api.github.com/repos/CineMingle/CineMingle/releases/latest")
     data = json.loads(htmlcode)
     remote = int(data["tag_name"].replace(".", ""))
     local_version = int(local_version.replace(".", ""))
     if local_version < remote:
         print("[*]" + ("* New update " + str(data["tag_name"]) + " *").center(54))
         print("[*]" + "↓ Download ↓".center(54))
-        print("[*]https://github.com/yoshiko2/Movie_Data_Capture/releases")
+        print("[*]https://github.com/CineMingle/CineMingle/releases")
         print("[*]======================================================")
 
 
@@ -322,6 +322,7 @@ def movie_lists(source_folder, regexstr: str) -> typing.List[str]:
     file_type = conf.media_type().lower().split(",")
     trailerRE = re.compile(r'-trailer\.', re.IGNORECASE)
     cliRE = None
+    
     if isinstance(regexstr, str) and len(regexstr):
         try:
             cliRE = re.compile(regexstr, re.IGNORECASE)
@@ -444,12 +445,14 @@ def rm_empty_folder(path):
 
 def create_data_and_move(movie_path: str, zero_op: bool, no_net_op: bool, oCC):
     # Normalized number, eg: 111xxx-222.mp4 -> xxx-222.mp4
+    skip_file_names = config.getInstance().skip_file_names()
     debug = config.getInstance().debug()
     n_number = get_number(debug, os.path.basename(movie_path))
     movie_path = os.path.abspath(movie_path)
-    print(movie_path)
-    for skip_name in ['社 區 最 新 情 報', '有 趣 的 臺 灣 妹 妹 直 播', '新 片 首 發 每 天 更 新 同 ','x u u 9 2','UUE29','uur9 3.com','uur76','x u u 6 2']:
+    # print(movie_path)
+    for skip_name in skip_file_names:
         if skip_name in movie_path:
+            print('[+]Skipping file:{}'.format(movie_path))
             return 
     if debug is True:
         print(f"[!] [{n_number}] As Number Processing for '{movie_path}'")
@@ -532,7 +535,7 @@ def main(args: tuple) -> Path:
     platform_total = str(
         ' - ' + platform.platform() + ' \n[*] - ' + platform.machine() + ' - Python-' + platform.python_version())
 
-    print('[*]================= Movie Data Capture =================')
+    print('[*]================= CineMingle =================')
     print('[*]' + version.center(54))
     print('[*]======================================================')
     print('[*]' + platform_total)
@@ -563,10 +566,11 @@ def main(args: tuple) -> Path:
             check_update(version)
             # Download Mapping Table, parallel version
             def fmd(f) -> typing.Tuple[str, Path]:
-                return ('https://raw.githubusercontent.com/yoshiko2/Movie_Data_Capture/master/MappingTable/' + f,
+                return ('https://raw.githubusercontent.com/CineMingle/CineMingle/master/MappingTable/' + f,
                         Path.home() / '.local' / 'share' / 'mdc' / f)
 
             map_tab = (fmd('mapping_actor.xml'), fmd('mapping_info.xml'), fmd('c_number.json'))
+            
             for k, v in map_tab:
                 if v.exists():
                     if file_modification_days(str(v)) >= conf.mapping_table_validity():
@@ -684,7 +688,7 @@ def period(delta, pattern):
 
 
 if __name__ == '__main__':
-    version = '6.6.3'
+    version = '1.0.0'
     urllib3.disable_warnings()  # Ignore http proxy warning
     app_start = time.time()
 

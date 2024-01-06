@@ -420,6 +420,9 @@ class Config:
 
     def download_actor_photo_for_kodi(self) -> bool:
         return self.conf.getboolean("actor_photo", "download_for_kodi", fallback=False)
+    
+    def skip_file_names(self) -> typing.Set[str]:
+        return self.conf.get('skipped_file_names', 'skip_file_names').split(',')
 
     @staticmethod
     def _exit(sec: str) -> None:
