@@ -688,7 +688,7 @@ def period(delta, pattern):
 
 
 if __name__ == '__main__':
-    version = '1.0.0'
+    version = '1.1.0'
     urllib3.disable_warnings()  # Ignore http proxy warning
     app_start = time.time()
 
