@@ -22,10 +22,6 @@ from cloudscraper import create_scraper
 import config
 
 
-def get_xpath_single(html_code: str, xpath):
-    html = etree.fromstring(html_code, etree.HTMLParser())
-    result1 = str(html.xpath(xpath)).strip(" ['']")
-    return result1
 
 
 G_USER_AGENT = r'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.133 Safari/537.36'
@@ -195,44 +191,44 @@ def get_html_by_browser(url: str = None, cookies: dict = None, ua: str = None, r
     return None
 
 
-def get_html_by_form(url, form_select: str = None, fields: dict = None, cookies: dict = None, ua: str = None,
-                     return_type: str = None, encoding: str = None):
-    config_proxy = config.getInstance().proxy()
-    s = requests.Session()
-    if isinstance(cookies, dict) and len(cookies):
-        requests.utils.add_dict_to_cookiejar(s.cookies, cookies)
-    retries = Retry(total=config_proxy.retry, connect=config_proxy.retry, backoff_factor=1,
-                    status_forcelist=[429, 500, 502, 503, 504])
-    s.mount("https://", TimeoutHTTPAdapter(max_retries=retries, timeout=config_proxy.timeout))
-    s.mount("http://", TimeoutHTTPAdapter(max_retries=retries, timeout=config_proxy.timeout))
-    if config_proxy.enable:
-        s.verify = config.getInstance().cacert_file()
-        s.proxies = config_proxy.proxies()
-    try:
-        browser = mechanicalsoup.StatefulBrowser(user_agent=ua or G_USER_AGENT, session=s)
-        result = browser.open(url)
-        if not result.ok:
-            return None
-        form = browser.select_form() if form_select is None else browser.select_form(form_select)
-        if isinstance(fields, dict):
-            for k, v in fields.items():
-                browser[k] = v
-        response = browser.submit_selected()
+# def get_html_by_form(url, form_select: str = None, fields: dict = None, cookies: dict = None, ua: str = None,
+#                      return_type: str = None, encoding: str = None):
+#     config_proxy = config.getInstance().proxy()
+#     s = requests.Session()
+#     if isinstance(cookies, dict) and len(cookies):
+#         requests.utils.add_dict_to_cookiejar(s.cookies, cookies)
+#     retries = Retry(total=config_proxy.retry, connect=config_proxy.retry, backoff_factor=1,
+#                     status_forcelist=[429, 500, 502, 503, 504])
+#     s.mount("https://", TimeoutHTTPAdapter(max_retries=retries, timeout=config_proxy.timeout))
+#     s.mount("http://", TimeoutHTTPAdapter(max_retries=retries, timeout=config_proxy.timeout))
+#     if config_proxy.enable:
+#         s.verify = config.getInstance().cacert_file()
+#         s.proxies = config_proxy.proxies()
+#     try:
+#         browser = mechanicalsoup.StatefulBrowser(user_agent=ua or G_USER_AGENT, session=s)
+#         result = browser.open(url)
+#         if not result.ok:
+#             return None
+#         form = browser.select_form() if form_select is None else browser.select_form(form_select)
+#         if isinstance(fields, dict):
+#             for k, v in fields.items():
+#                 browser[k] = v
+#         response = browser.submit_selected()
 
-        if return_type == "object":
-            return response
-        elif return_type == "content":
-            return response.content
-        elif return_type == "browser":
-            return response, browser
-        else:
-            result.encoding = encoding or "utf-8"
-            return response.text
-    except requests.exceptions.ProxyError:
-        print("[-]get_html_by_form() Proxy error! Please check your Proxy")
-    except Exception as e:
-        print(f'[-]get_html_by_form() Failed! {e}')
-    return None
+#         if return_type == "object":
+#             return response
+#         elif return_type == "content":
+#             return response.content
+#         elif return_type == "browser":
+#             return response, browser
+#         else:
+#             result.encoding = encoding or "utf-8"
+#             return response.text
+#     except requests.exceptions.ProxyError:
+#         print("[-]get_html_by_form() Proxy error! Please check your Proxy")
+#     except Exception as e:
+#         print(f'[-]get_html_by_form() Failed! {e}')
+#     return None
 
 
 def get_html_by_scraper(url: str = None, cookies: dict = None, ua: str = None, return_type: str = None,
@@ -271,34 +267,6 @@ def get_html_by_scraper(url: str = None, cookies: dict = None, ua: str = None, r
     return None
 
 
-# def get_javlib_cookie() -> [dict, str]:
-#     import cloudscraper
-#     switch, proxy, timeout, retry_count, proxytype = config.getInstance().proxy()
-#     proxies = get_proxy(proxy, proxytype)
-#
-#     raw_cookie = {}
-#     user_agent = ""
-#
-#     # Get __cfduid/cf_clearance and user-agent
-#     for i in range(retry_count):
-#         try:
-#             if switch == 1 or switch == '1':
-#                 raw_cookie, user_agent = cloudscraper.get_cookie_string(
-#                     "http://www.javlibrary.com/",
-#                     proxies=proxies
-#                 )
-#             else:
-#                 raw_cookie, user_agent = cloudscraper.get_cookie_string(
-#                     "http://www.javlibrary.com/"
-#                 )
-#         except requests.exceptions.ProxyError:
-#             print("[-] ProxyError, retry {}/{}".format(i + 1, retry_count))
-#         except cloudscraper.exceptions.CloudflareIUAMError:
-#             print("[-] IUAMError, retry {}/{}".format(i + 1, retry_count))
-#
-#     return raw_cookie, user_agent
-
-
 def translate(
         src: str,
         target_language: str = config.getInstance().get_target_language(),
@@ -307,11 +275,10 @@ def translate(
         key: str = "",
         delay: int = 0,
 ) -> str:
-    """
-    translate japanese kana to simplified chinese
-    翻译日语假名到简体中文
-    :raises ValueError: Non-existent translation engine
-    """
+    # translate japanese kana to simplified chinese
+    # 翻译日语假名到简体中文
+    # :raises ValueError: Non-existent translation engine
+    
     trans_result = ""
     # 中文句子如果包含&等符号会被谷歌翻译截断损失内容，而且中文翻译到中文也没有意义，故而忽略，只翻译带有日语假名的
     if (is_japanese(src) == False) and ("zh_" in target_language):
