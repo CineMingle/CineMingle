@@ -31,3 +31,6 @@ CineMingle 是在停止维护的开源项目 [Movie_Data_Capture](https://github
 ## 获取 CineMingle：
 立即下载 CineMingle，让您的本地影片库更具吸引力，轻松管理您的电影收藏。
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=CineMingle/CineMingle&type=Date)](https://star-history.com/#CineMingle/CineMingle&Date)
