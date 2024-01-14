@@ -392,7 +392,8 @@ def movie_lists(source_folder, regexstr: str) -> typing.List[str]:
         print('[-]Source folder not found!')
         return []
     total = []
-    source = Path(source_folder).resolve()
+    # source = Path(source_folder).resolve()
+    source = Path(source_folder)
     skip_failed_cnt, skip_nfo_days_cnt = 0, 0
     escape_folder_set = set(re.split("[,，]", conf.escape_folder()))
     for full_name in source.glob(r'**/*'):
