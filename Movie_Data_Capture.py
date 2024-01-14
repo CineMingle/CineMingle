@@ -24,6 +24,13 @@ from core import core_main, core_main_no_net_op, moveFailedFolder, debug_print
 
 
 def check_update(local_version):
+    """
+    Check for updates by comparing the local version of the application with the latest version available on GitHub.
+    It fetches the latest release information from GitHub and compares the version numbers.
+    If a new version is available, it prints out the update information.
+
+    :param local_version: The current local version of the application.
+    """
     htmlcode = get_html("https://api.github.com/repos/CineMingle/CineMingle/releases/latest")
     data = json.loads(htmlcode)
     remote = int(data["tag_name"].replace(".", ""))
@@ -36,6 +43,13 @@ def check_update(local_version):
 
 
 def argparse_function(ver: str) -> typing.Tuple[str, str, str, str, bool, bool, str, str]:
+    """
+    Parses command-line arguments and returns the parsed values. It sets up the argument parser with various options
+    for the application and returns the parsed arguments and their values. It also loads configuration from a config file.
+
+    :param ver: The version of the application, used for the version argument.
+    :return: A tuple containing various parsed arguments and flags.
+    """
     conf = config.getInstance()
     parser = argparse.ArgumentParser(epilog=f"Load Config file '{conf.ini_path}'.")
     parser.add_argument("file", default='', nargs='?', help="Single Movie file path.")
@@ -174,6 +188,12 @@ class ErrLogger(OutLogger):
 
 
 def dupe_stdout_to_logfile(logdir: str):
+    """
+    Duplicates the standard output (stdout) and standard error (stderr) to log files. This function creates log files
+    in the specified directory and redirects stdout and stderr to these files for logging purposes.
+
+    :param logdir: The directory where log files will be created and saved.
+    """
     if not isinstance(logdir, str) or len(logdir) == 0:
         return
     log_dir = Path(logdir)
@@ -194,6 +214,12 @@ def dupe_stdout_to_logfile(logdir: str):
 
 
 def close_logfile(logdir: str):
+    """
+    Closes the log files and restores standard output and error streams. This function is typically called at the end
+    of the application to ensure that log files are properly closed.
+
+    :param logdir: The directory where log files are saved.
+    """
     if not isinstance(logdir, str) or len(logdir) == 0 or not os.path.isdir(logdir):
         return
     # 日志关闭前保存日志路径
@@ -302,11 +328,23 @@ def close_logfile(logdir: str):
 
 
 def signal_handler(*args):
+    """
+    A signal handler function for handling operating system signals like Ctrl+C (SIGINT). It defines the behavior of
+    the application when such signals are received, such as graceful termination.
+
+    :param args: Variable argument list, used to handle signal information.
+    """
     print('[!]Ctrl+C detected, Exit.')
     os._exit(9)
 
 
 def sigdebug_handler(*args):
+    """
+    A signal handler function specifically for toggling debug mode on or off. It alters the debug configuration
+    based on certain system signals (like window size change in Unix systems).
+
+    :param args: Variable argument list, used to handle signal information.
+    """
     conf = config.getInstance()
     conf.set_override(f"debug_mode:switch={int(not conf.debug())}")
     print(f"[!]Debug {('oFF', 'On')[int(conf.debug())]}")
@@ -314,6 +352,14 @@ def sigdebug_handler(*args):
 
 # 新增失败文件列表跳过处理，及.nfo修改天数跳过处理，提示跳过视频总数，调试模式(-g)下详细被跳过文件，跳过小广告
 def movie_lists(source_folder, regexstr: str) -> typing.List[str]:
+    """
+    Generates a list of movie file paths from the specified source folder. It filters files based on regular
+    expressions and other criteria, such as file type and size.
+
+    :param source_folder: The folder to scan for movie files.
+    :param regexstr: A regular expression string to filter movie files.
+    :return: A list of paths to the movie files that match the criteria.
+    """
     conf = config.getInstance()
     main_mode = conf.main_mode()
     debug = conf.debug()
@@ -430,6 +476,12 @@ def create_failed_folder(failed_folder: str):
 
 
 def rm_empty_folder(path):
+    """
+    Recursively removes empty folders from a given path. This function is useful for cleaning up the directory structure
+    by removing folders that no longer contain any files.
+
+    :param path: The path where empty folders will be searched for and removed.
+    """
     abspath = os.path.abspath(path)
     deleted = set()
     for current_dir, subdirs, files in os.walk(abspath, topdown=False):
@@ -444,6 +496,15 @@ def rm_empty_folder(path):
 
 
 def create_data_and_move(movie_path: str, zero_op: bool, no_net_op: bool, oCC):
+    """
+    Processes a movie file, generates necessary data, and moves the file to an appropriate directory based on the outcome.
+    This function is central to the application's file processing logic, including scraping, organizing, and error handling.
+
+    :param movie_path: Path of the movie file to be processed.
+    :param zero_op: A boolean flag indicating whether to perform a dry run (no actual file operations).
+    :param no_net_op: A boolean flag to indicate whether network operations are to be skipped.
+    :param oCC: An OpenCC instance for language conversion, if required.
+    """
     # Normalized number, eg: 111xxx-222.mp4 -> xxx-222.mp4
     skip_file_names = config.getInstance().skip_file_names()
     debug = config.getInstance().debug()
@@ -491,6 +552,16 @@ def create_data_and_move(movie_path: str, zero_op: bool, no_net_op: bool, oCC):
 
 
 def create_data_and_move_with_custom_number(file_path: str, custom_number, oCC, specified_source, specified_url):
+    """
+    Similar to 'create_data_and_move', but allows for specifying a custom number for the movie file. This function
+    is used when the movie file needs to be processed with a custom identifier rather than an automatically extracted one.
+
+    :param file_path: Path of the movie file to be processed.
+    :param custom_number: Custom identifier for the movie file.
+    :param oCC: An OpenCC instance for language conversion, if required.
+    :param specified_source: A specific source to be used for processing.
+    :param specified_url: A specific URL to be used for processing.
+    """
     conf = config.getInstance()
     file_name = os.path.basename(file_path)
     try:
@@ -516,8 +587,16 @@ def create_data_and_move_with_custom_number(file_path: str, custom_number, oCC, 
 
 
 def main(args: tuple) -> Path:
+    """
+    The main function of the application. It orchestrates the overall process, including setting up logging,
+    checking for updates, processing command-line arguments, and handling the movie processing workflow.
+
+    :param args: A tuple containing various command-line arguments and flags.
+    :return: A Path object indicating the location of the logfile, if any.
+    """
     (single_file_path, custom_number, logdir, regexstr, zero_op, no_net_op, search, specified_source,
      specified_url) = args
+    
     conf = config.getInstance()
     main_mode = conf.main_mode()
     folder_path = ""
@@ -667,17 +746,18 @@ def main(args: tuple) -> Path:
     return close_logfile(logdir)
 
 
-def 分析日志文件(logfile):
+def analyze_log_file(logfile):
     try:
         if not (isinstance(logfile, Path) and logfile.is_file()):
             raise FileNotFoundError('log file not found')
         logtxt = logfile.read_text(encoding='utf-8')
-        扫描电影数 = int(re.findall(r'\[\+]Find (.*) movies\.', logtxt)[0])
-        已处理 = int(re.findall(r'\[1/(.*?)] -', logtxt)[0])
-        完成数 = logtxt.count(r'[+]Wrote!')
-        return 扫描电影数, 已处理, 完成数
+        scanned_movies_count = int(re.findall(r'\[\+]Find (.*) movies\.', logtxt)[0])
+        processed_count = int(re.findall(r'\[1/(.*?)] -', logtxt)[0])
+        success_count = logtxt.count(r'[+]Wrote!')
+        return scanned_movies_count, processed_count, success_count
     except:
         return None, None, None
+
 
 
 def period(delta, pattern):
@@ -688,7 +768,7 @@ def period(delta, pattern):
 
 
 if __name__ == '__main__':
-    version = '1.1.0'
+    version = '1.2.0'
     urllib3.disable_warnings()  # Ignore http proxy warning
     app_start = time.time()
 
@@ -698,25 +778,25 @@ if __name__ == '__main__':
     # Parse command line args
     args = tuple(argparse_function(version))
 
-    再运行延迟 = conf.rerun_delay()
-    if 再运行延迟 > 0 and conf.stop_counter() > 0:
+    rerun_delay = conf.rerun_delay()
+    if rerun_delay > 0 and conf.stop_counter() > 0:
         while True:
             try:
                 logfile = main(args)
-                (扫描电影数, 已处理, 完成数) = 分析结果元组 = tuple(分析日志文件(logfile))
-                if all(isinstance(v, int) for v in 分析结果元组):
-                    剩余个数 = 扫描电影数 - 已处理
-                    总用时 = timedelta(seconds = time.time() - app_start)
-                    print(f'All movies:{扫描电影数}  processed:{已处理}  successes:{完成数}  remain:{剩余个数}' +
+                (scanned_movies, processed, success_count) = analysis_result = tuple(analyze_log_file(logfile))
+                if all(isinstance(v, int) for v in analysis_result):
+                    remaining_count = scanned_movies - processed
+                    total_elapsed = timedelta(seconds = time.time() - app_start)
+                    print(f'All movies:{scanned_movies}  processed:{processed}  successes:{success_count}  remain:{remaining_count}' +
                         '  Elapsed time {}'.format(
-                        period(总用时, "{d} day {h}:{m:02}:{s:02}") if 总用时.days == 1
-                            else period(总用时, "{d} days {h}:{m:02}:{s:02}") if 总用时.days > 1
-                            else period(总用时, "{h}:{m:02}:{s:02}")))
-                    if 剩余个数 == 0:
+                        period(total_elapsed, "{d} day {h}:{m:02}:{s:02}") if total_elapsed.days == 1
+                            else period(total_elapsed, "{d} days {h}:{m:02}:{s:02}") if total_elapsed.days > 1
+                            else period(total_elapsed, "{h}:{m:02}:{s:02}")))
+                    if remaining_count == 0:
                         break
-                    下次运行 = datetime.now() + timedelta(seconds=再运行延迟)
-                    print(f'Next run time: {下次运行.strftime("%H:%M:%S")}, rerun_delay={再运行延迟}, press Ctrl+C stop run.')
-                    time.sleep(再运行延迟)
+                    next_run_time = datetime.now() + timedelta(seconds=rerun_delay)
+                    print(f'Next run time: {next_run_time.strftime("%H:%M:%S")}, rerun_delay={rerun_delay}, press Ctrl+C stop run.')
+                    time.sleep(rerun_delay)
                 else:
                     break
             except:

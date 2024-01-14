@@ -9,6 +9,7 @@ if exist ".\python\python.exe" (
 ) else (
     echo ����ʹ��ϵͳ python ��������....
 )
-%PYTHON% Movie_Data_Capture.py
+@REM %PYTHON% Movie_Data_Capture.py -L 1 -p H:\115
+%PYTHON% Movie_Data_Capture.py -L 1 -p H:\115
 
 pause
