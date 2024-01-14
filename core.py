@@ -607,7 +607,8 @@ def paste_file_to_folder(filepath, path, multi_part, number, part, leak_word, c_
                 filerelpath = os.path.relpath(filepath, path)
                 os.symlink(filerelpath, targetpath)
             except:
-                os.symlink(str(filepath_obj.resolve()), targetpath)
+                # os.symlink(str(filepath_obj.resolve()), targetpath)
+                os.symlink(str(filepath_obj), targetpath)
         return
 
     except FileExistsError as fee:
