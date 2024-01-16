@@ -224,6 +224,9 @@ class Config:
 
     def anonymous_fill(self) -> bool:
         return self.conf.getint("common", "anonymous_fill")
+    
+    def check_subtitles(self) -> int:
+        return self.conf.getint("common", "check_subtitles")
 
     def stop_counter(self) -> int:
         return self.conf.getint("advenced_sleep", "stop_counter", fallback=0)
