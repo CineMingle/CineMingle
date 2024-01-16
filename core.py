@@ -956,9 +956,10 @@ def core_main(movie_path, number_th, oCC, specified_source=None, specified_url=N
         paste_file_to_folder(movie_path, path, multi_part, number, part, leak_word, c_word, hack_word)
 
         # Move subtitles
-        cn_sub = False
         if(conf.check_subtitles()):
-            cn_sub = move_subtitles(movie_path, path, multi_part, number, part, leak_word, c_word, hack_word)
+            move_status = move_subtitles(movie_path, path, multi_part, number, part, leak_word, c_word, hack_word)
+            if move_status:
+                cn_sub = True
         # 添加水印
         if conf.is_watermark():
             add_mark(os.path.join(path, poster_path), os.path.join(path, thumb_path), cn_sub, leak, uncensored,
