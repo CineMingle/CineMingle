@@ -417,6 +417,18 @@ class Config:
 
     def face_aspect_ratio(self) -> float:
         return self.conf.getfloat("face", "aspect_ratio", fallback=2.12)
+    
+    def waifu2x_switch(self) -> bool:
+        return self.conf.getboolean("waifu2x", "switch", fallback=False)
+    
+    def waifu2x_gpuid(self) -> int:
+        return self.conf.getint("waifu2x", "gpuid", fallback=1)
+    
+    def waifu2x_scale(self) -> int:
+        return self.conf.getint("waifu2x", "scale", fallback=2)
+    
+    def waifu2x_noise(self) -> int:
+        return self.conf.getint("waifu2x", "noise", fallback=3)
 
     def jellyfin_multi_part_fanart(self) -> bool:
         return self.conf.getboolean("jellyfin", "multi_part_fanart", fallback=False)
