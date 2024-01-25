@@ -2,7 +2,7 @@ import os.path
 import pathlib
 import shutil
 import sys
-from waifu2x_ncnn_py import Waifu2x
+from realesrgan_ncnn_py import Realesrgan
 
 from PIL import Image
 # 感谢 聪明绝顶二狗子 提供解决方案
@@ -313,31 +313,27 @@ def image_download(cover, fanart_path, thumb_path, path, filepath, json_headers=
     if file_not_exist_or_empty(full_filepath):
         return
     
-    if conf.waifu2x_switch():
-        gpuid = conf.waifu2x_gpuid()
-        scale = conf.waifu2x_scale()
-        noise = conf.waifu2x_noise()
-
-        # waifu2x放大两倍图像
+    print('[+]Image Downloaded!', Path(full_filepath).name)
+    if conf.super_resolution_switch():
+        gpuid = conf.super_resolution_gpuid()
+        model = conf.super_resolution_model()
         try:
-            SuperResolutionImage(full_filepath,gpuid,scale,noise)
+            SuperResolutionImage(full_filepath,gpuid,model)
         except Exception as e:
             print(e)
             print('[-]Image super-resolution failed, using original Image')
-            
-        print(f'[+]Successfully super-resolution Image, using scale:{scale}')
+        print(f'[+]Successfully super-resolution Image, using model:{model}')
 
-    print('[+]Image Downloaded!', Path(full_filepath).name)
     if not config.getInstance().jellyfin():
         shutil.copyfile(full_filepath, os.path.join(path, fanart_path))
 
-# waifu2x放大两倍图像
-def SuperResolutionImage(path,gpuid,scale,noise):
-    waifu2x = Waifu2x(gpuid, scale, noise)
+# 放大图像
+def SuperResolutionImage(path,gpuid,model):
+    realesrgan = Realesrgan(gpuid=gpuid,model=model)
     with Image.open(path) as f:
-        image = waifu2x.process_pil(f)
+        image = realesrgan.process_pil(f)
     f.close()
-    image.save(path, quality=95)    
+    image.save(path, quality=95)
 
 def print_files(path, leak_word, c_word, naming_rule, part, cn_sub, json_data, filepath, tag, actor_list, liuchu,
                 uncensored, hack, hack_word, _4k, fanart_path, poster_path, thumb_path):

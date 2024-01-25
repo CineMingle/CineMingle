@@ -11,3 +11,4 @@ urllib3==1.25.11
 certifi
 MechanicalSoup
 opencc-python-reimplemented
+realesrgan_ncnn_py
