@@ -30,6 +30,9 @@ class Javbus(Parser):
     expr_tags = '/html/head/meta[@name="keywords"]/@content'
     expr_uncensored = '//*[@id="navbar"]/ul[1]/li[@class="active"]/a[contains(@href,"uncensored")]'
 
+    def extraInit(self):
+        self.cookies = {"dv":"1"}
+        
     def search(self, number):
         self.number = number
         try:
