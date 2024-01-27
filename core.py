@@ -329,8 +329,11 @@ def image_download(cover, fanart_path, thumb_path, path, filepath, json_headers=
 
 # 放大图像
 def SuperResolutionImage(path,gpuid,model):
-    realesrgan = Realesrgan(gpuid=gpuid,model=model)
     with Image.open(path) as f:
+        if f.size[1] > 1000:
+            print('[-]Image was already high resolution, passed realesrgan')
+            return
+        realesrgan = Realesrgan(gpuid=gpuid,model=model)
         image = realesrgan.process_pil(f)
     f.close()
     image.save(path, quality=95)
